@@ -1,34 +1,45 @@
 from .delete import delete_request
-from .get import get_user_from_request_by_id, get_id_operator_by_telegram_id, get_model_id_by_telegram_id
 from ...database.main import Database
-from ...database.models import ModelAccount, RequestGroup, ModelGroup, OperatorGroup
+from ...database.models import Products, CompoundProducts, Ingredients, Procurement, Fabric, Implementation
+from .get import get_products_id, get_compound_product_id, get_ingredient_id
 
 
-def create_model_account(api_id: str, api_hash: str, phone: str, id_model: int):
+def create_product(name_product:str, weight_product: str, product_expiration_date: str, whosale_price_product: str):
     session = Database().session
-    model_id = get_model_id_by_telegram_id(id_model)
-    session.add(ModelAccount(api_id=api_id, api_hash=api_hash, phone=phone, auth_status=False, id_model=model_id))
+    session.add(Products(name_product = name_product, weight_product = weight_product, 
+                        product_expiration_date = product_expiration_date, whosale_price_product = whosale_price_product))
     session.commit()
 
-
-def create_request(telegram_id: int, username: str, name: str, group: str):
+def create_compound_products(product_id: int, quantity: int, products_id: int):
     session = Database().session
-    session.add(RequestGroup(telegram_id=telegram_id, username=username, name=name, group=group))
+    products_id = get_products_id(products_id)
+    session.add(CompoundProducts(product_id = product_id, quantity = quantity))
     session.commit()
 
-
-def create_operator(telegram_id: int):
+def create_ingredients(compound_id: int, product_expiration_date: str, calories_product: int, price: int,
+                       compound_product_id: int):
     session = Database().session
-    username, name = get_user_from_request_by_id(telegram_id)
-    session.add(OperatorGroup(telegram_id=telegram_id, username=username, name=name))
+    compound_product_id = get_compound_product_id(compound_product_id) 
+    session.add(Ingredients(compound_id = compound_id, product_expiration_date = product_expiration_date,
+                            calories_product = calories_product, price = price))
     session.commit()
-    delete_request(telegram_id)
 
-
-def create_model(model_telegram_id: int, operator_telegram_id: int):
+def create_procurement(ingredient_id: int, quantity: int, procurement_date: str, added: bool):
+    #products_id = get_products_id(products_id)
     session = Database().session
-    username, name = get_user_from_request_by_id(model_telegram_id)
-    operator_id = get_id_operator_by_telegram_id(operator_telegram_id)
-    session.add(ModelGroup(operator_id=operator_id, telegram_id=model_telegram_id, username=username, name=name))
+    ingredient_id = get_ingredient_id(ingredient_id)
+    session.add(Procurement(quantity = quantity, procurement_date = procurement_date, added = added))
     session.commit()
-    delete_request(model_telegram_id)
+
+def create_fabric(products_id: int, quantity: int, date_manufacture: str, defective: int):
+    session = Database().session
+    products_id = get_products_id(products_id)
+    session.add(Fabric(quantity = quantity, date_manufacture = date_manufacture, defective = defective))
+    session.commit()
+
+def create_implementation(product_id: int, quantity: int, date_manufacture: str):
+    session = Database().session
+    products_id = get_products_id(products_id)
+    session.add(Implementation(quantity = quantity, date_manufacture = date_manufacture))
+    session.commit()
+

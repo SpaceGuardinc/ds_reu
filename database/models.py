@@ -1,8 +1,17 @@
-from sqlalchemy import Column, Boolean, Integer, String, BIGINT, VARCHAR, BOOLEAN, ForeignKey, Date
+from sqlalchemy import Column, Boolean, Integer, VARCHAR, ForeignKey, Date
+from sqlalchemy import ForeignKey
+from sqlalchemy import Integer
 from sqlalchemy.orm import relationship
-
 from main import Database
 
+
+"""
+ref: products.id < compound_products.product_id
+ref: compound_products.id < ingredients.compound_id
+ref: ingredients.id - procurement.ingredient_id
+ref: products.id - fabric.product_id
+ref: products.id - implementation.product_id
+"""
 
 class Products(Database.BASE):
     __tablename__ = 'products'
@@ -12,7 +21,9 @@ class Products(Database.BASE):
     product_expiration_date = Column(Integer, nullable=True)
     calories_product = Column(Integer, nullable=True)
     wholesale_price_product = Column(Integer, nullable=True)
-    compound_product = relationship() 
+    compound_products_id = relationship("CompoundProducts")
+    fabric = relationship("Fabric", uselist=False, backref="products")
+    implementation = relationship("Implementation", uselist=False, backref="products")
 
 
 class CompoundProducts(Database.BASE):
@@ -20,8 +31,9 @@ class CompoundProducts(Database.BASE):
     id = Column(Integer, primary_key=True)
     product_id = Column(Integer, nullable=True)
     quantity = Column(Integer, nullable=True)
-    products = ForeignKey("products.id")
-    ingredients = relationship(back_populates="id")
+    products_id = Column(Integer, ForeignKey("products.id"))
+    intgredients_id = relationship("Ingredients")
+    #ingredients = relationship(back_populates="id")
 
 class Ingredients(Database.BASE):
     __tablename__ = 'ingredients'
@@ -30,34 +42,28 @@ class Ingredients(Database.BASE):
     product_expiration_date = Column(Date, nullable=True)
     calories_product = Column(Integer, nullable=True)
     price = Column(Integer, nullable=True)
-    compound_products = ForeignKey("compound_products.id")
-    procurement = relationship(back_populates="id")
+    compound_product_id = Column(Integer, ForeignKey("compound_products.id"))
+    procurement = relationship("Procurement", uselist=False, backref="ingredients")
 
 class Procurement(Database.BASE):
     __tablename__ = 'procurement'
     id = Column(Integer, primary_key=True)
-    ingredient_id = Column(Integer, nullable=True)
+    ingredient_id = Column(Integer, ForeignKey("ingredients.id"))
     quantity = Column(Integer, nullable=True)
     procurement_date = Column(Date, nullable=True)
     added = Column(Boolean, nullable=True)
-    ingredients = ForeignKey("ingredients.id")
-    procutrment = relationship(back_populates="id")
 
 class Fabric(Database.BASE):
     __tablename__ = 'fabric'
     id = Column(Integer, primary_key=True)
-    product_id = Column(Integer, nullable=True)
+    product_id = Column(Integer, ForeignKey("products.id"))
     quantity = Column(Integer, nullable=True)
     date_manufacture = Column(Date, nullable=True)
     defective = Column(Integer, nullable=True)
-    products = ForeignKey("products.id") 
-    products = relationship(back_populates="id")
 
 class Implementation(Database.BASE):
     __tablename__ = 'implementation'
     id = Column(Integer, primary_key=True)
-    product_id = Column(Integer, nullable=True)
+    product_id = Column(Integer, ForeignKey("products.id"))
     quantity = Column(Integer, nullable=True)
     date_manufacture = Column(Integer, nullable=True)
-    products = ForeignKey("products.id")
-    products = relationship(back_populates="id")

@@ -2,6 +2,24 @@ from sqlalchemy import exc
 
 from ...database.main import Database
 from ...database.models import AdminGroup, OperatorGroup, ModelGroup, ModelAccount, RequestGroup
+from ...database.models import Products, CompoundProducts, Ingredients, Procurement, Fabric
+
+def get_products_id(id: int) -> int:
+    products_id = Database().session.query(CompoundProducts.id).where(CompoundProducts.products_id == products_id).first()
+    return products_id[0]
+
+def get_compound_product_id(id: int) -> int:
+    compound_product_id = Database().session.query(Ingredients.id).where(
+        Ingredients.compound_product_id == compound_product_id
+        ).first()
+    return compound_product_id[0]
+
+def get_ingredient_id(id: int) -> int:
+    ingredient_id = Database().session.query(Procurement.id).where(
+        Procurement.ingredient_id == ingredient_id
+    ).first()
+    return ingredient_id[0]
+
 
 
 # def for models
@@ -21,6 +39,7 @@ def get_all_id_models() -> list:
     for rowInIdList in listOfModelsId:
         listOfId.append(rowInIdList.telegram_id)
     return listOfId
+
 
 
 def get_model_id_by_telegram_id(telegram_id: int) -> int:

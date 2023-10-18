@@ -10,7 +10,7 @@ class Database(metaclass=SingletonMeta):
     BASE: Final = declarative_base()
 
     def __init__(self):
-        self.__engine = create_engine(f'postgresql+pg8000://postgres:UMxjcFACw67Bf@127.0.0.1:5433/breadfabric')
+        self.__engine = create_engine(f'postgresql+pg8000://postgres:123123@127.0.0.1:5433/breadfabric')
         session = sessionmaker(bind=self.__engine)
         self.__session = session()
 
