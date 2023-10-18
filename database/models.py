@@ -2,7 +2,7 @@ from sqlalchemy import Column, Boolean, Integer, VARCHAR, ForeignKey, Date
 from sqlalchemy import ForeignKey
 from sqlalchemy import Integer
 from sqlalchemy.orm import relationship
-from main import Database
+from .main import Database
 
 
 """
@@ -18,7 +18,7 @@ class Products(Database.BASE):
     id = Column(Integer, primary_key=True)
     name_product = Column(VARCHAR, nullable=True)
     weight_product = Column(Integer, nullable=True)
-    product_expiration_date = Column(Integer, nullable=True)
+    product_expiration_date = Column(Date, nullable=True)
     calories_product = Column(Integer, nullable=True)
     wholesale_price_product = Column(Integer, nullable=True)
     compound_products_id = relationship("CompoundProducts")
@@ -29,20 +29,17 @@ class Products(Database.BASE):
 class CompoundProducts(Database.BASE):
     __tablename__ = 'compound_products'
     id = Column(Integer, primary_key=True)
-    product_id = Column(Integer, nullable=True)
     quantity = Column(Integer, nullable=True)
-    products_id = Column(Integer, ForeignKey("products.id"))
-    intgredients_id = relationship("Ingredients")
-    #ingredients = relationship(back_populates="id")
+    product_id = Column(Integer, ForeignKey("products.id"))
+    ingredients_id = relationship("Ingredients")
 
 class Ingredients(Database.BASE):
     __tablename__ = 'ingredients'
     id = Column(Integer, primary_key=True)
-    compound_id = Column(Integer, nullable=True)
+    compound_id = Column(Integer, ForeignKey("compound_products.id"))
     product_expiration_date = Column(Date, nullable=True)
     calories_product = Column(Integer, nullable=True)
     price = Column(Integer, nullable=True)
-    compound_product_id = Column(Integer, ForeignKey("compound_products.id"))
     procurement = relationship("Procurement", uselist=False, backref="ingredients")
 
 class Procurement(Database.BASE):
@@ -66,4 +63,8 @@ class Implementation(Database.BASE):
     id = Column(Integer, primary_key=True)
     product_id = Column(Integer, ForeignKey("products.id"))
     quantity = Column(Integer, nullable=True)
-    date_manufacture = Column(Integer, nullable=True)
+    date_manufacture = Column(Date, nullable=True)
+
+def register_models():
+    Database.BASE.metadata.create_all(Database().engine)
+
