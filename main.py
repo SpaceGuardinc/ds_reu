@@ -3,21 +3,7 @@ from database.server_methods.create import create_compound_products, create_fabr
 from datetime import datetime, timedelta
 from database.server_methods.delete import drop_table
 import random
-
-
-# import random
-# from datetime import datetime, timedelta
-
-# # Генерация случайной даты в диапазоне 1 год
-# start_date = datetime.now() - timedelta(days=365)
-# random_date = start_date + timedelta(days=random.randint(0, 365))
-
-# # Прибавление 1 года к случайной дате
-# new_date = random_date + timedelta(days=365)
-
-# # Вывод результатов
-# print(f"Случайная дата: {random_date}")
-# print(f"Дата после добавления 1 года: {new_date}")
+from database.server_methods.get import get_products
 
 def start():
     start_date = datetime.now() - timedelta(days=14)
@@ -51,5 +37,6 @@ def start():
      
 
 if __name__ == "__main__":
-    drop_table()
-    start()
+    #drop_table()
+    #start()
+    get_products()
