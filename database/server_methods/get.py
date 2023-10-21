@@ -2,7 +2,6 @@ from database.main import Database
 from database.models import Products, CompoundProducts, Ingredients, Procurement, Fabric, Implementation
 import pandas
 from sqlalchemy import select
-import matplotlib.pyplot as plt
 
 
 def get_products():
@@ -15,8 +14,8 @@ def get_products():
                         Fabric.quantity,
                         Fabric.date_manufacture,
                         Fabric.defective,
-                        Implementation.quantity,
-                        Implementation.date_manufacture,
+                        #Implementation.quantity,
+                        #Implementation.date_manufacture,
                         CompoundProducts.quantity,
                         Ingredients.product_expiration_date,
                         Ingredients.calories_product,
@@ -30,5 +29,5 @@ def get_products():
         con=Database().engine
     )
     #print(answer_df)
-
-    answer_df.plot.hist()
+    return answer_df
+    #answer_df.plot.hist()
